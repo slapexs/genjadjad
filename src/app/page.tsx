@@ -1,91 +1,143 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 import React, { useState } from "react"
 import { v1, v4, NIL } from "uuid"
 import ClipboardLineIcon from "remixicon-react/ClipboardLineIcon"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import DownloadFile from "@/components/DownloadFile"
+import DefaultButton from "@/components/DefaultButton"
+import ShuffleLineIcon from "remixicon-react/ShuffleLineIcon"
+import DeleteBinLineIcon from "remixicon-react/DeleteBinLineIcon"
+import Image from "next/image"
 
-type Props = {}
+function Home() {
+	const [amount, setAmount] = useState<number>(1)
+	const [listId, setListId] = useState<string[]>([])
 
-function Home({}: Props) {
-	const [uuid, setUuid] = useState<string>(
-		"00000000-0000-0000-0000-000000000000"
-	)
-	const [isCopy, setIsCopy] = useState<boolean>(false)
-	const [algorithm, setAlgorithm] = useState<string>("uuid V1")
-
-	const GenUUIDV1 = () => {
-		setAlgorithm("uuid v1")
-		setUuid(v1())
-	}
-	const GenUUIDV4 = () => {
-		setAlgorithm("uuid v4")
-		setUuid(v4())
-	}
-	const GenNIL = () => {
-		setAlgorithm("uuid NIL")
-		setUuid(NIL)
-	}
-	const Notify = () => {
+	const CopiedNotify = () => {
 		toast("คัดลอกแล้ว !", {
 			position: "top-center",
 			theme: "dark",
 			pauseOnFocusLoss: false,
-			autoClose: 2000,
+			autoClose: 1500,
 			pauseOnHover: false,
 		})
 	}
-	const CopyToClipboard = () => {
-		navigator.clipboard.writeText(uuid).then((res) => {
-			setIsCopy(true)
-			Notify()
+	const ErrorNotify = (text: string) => {
+		toast.error(text, {
+			position: "top-center",
+			theme: "dark",
+			pauseOnFocusLoss: false,
+			autoClose: 3000,
+			pauseOnHover: false,
 		})
+	}
+	const CopyToClipboard = (id: string) => {
+		navigator.clipboard.writeText(id).then((res) => CopiedNotify())
+	}
+	const CopyAll = () => {
+		navigator.clipboard
+			.writeText(listId.join("\n"))
+			.then((res) => CopiedNotify())
+	}
+
+	const GenerateListId = () => {
+		if (amount > 1000) {
+			ErrorNotify("สุ่มสูงสุดแค่ 1000 ก็พอเอาอะไรเยอะแยะ")
+			setAmount(1000)
+		}
+		const temp = []
+		for (let i = 0; i < amount; i++) {
+			temp.push(v4())
+		}
+		setListId(temp)
 	}
 
 	return (
-		<main className="w-full h-screen flex justify-center items-center">
+		<main className="w-full flex flex-col items-center">
 			<ToastContainer />
-			<section className="w-11/12" id="container">
-				<h1 className="text-xl text-violet-400">
-					สุ่มด้วย:{" "}
-					<span className="text-violet-600 text-2xl font-bold">
-						{algorithm}
-					</span>
-				</h1>
-				<div className="flex items-center gap-4 my-10 justify-center flex-col lg:flex-row">
-					<p className="lg:text-5xl text-3xl text-center">{uuid}</p>
-					<button
-						type="button"
-						className="flex gap-x-2 outline outline-1 outline-violet-300 hover:outline-violet-400 transition hover:bg-violet-400 hover:text-white p-2 rounded"
-						onClick={CopyToClipboard}
-					>
-						<ClipboardLineIcon /> <span>คัดลอก</span>
-					</button>
+			<article className="w-11/12 my-20 flex items-center justify-center">
+				<Image
+					src="/favicon.ico"
+					alt="favicon"
+					width={200}
+					height={200}
+					draggable={false}
+				/>
+				<div className="space-y-4">
+					<h1 className="text-5xl font-bold">สุ่มรหัส UUID v4</h1>
+					<p className="text-gray-400">ระบุจำนวนแล้วกด "สุ่มใหม่" ได้เลย!</p>
 				</div>
-				<div className="space-x-3 flex justify-center">
-					<button
-						type="button"
-						className="bg-purple-200 hover:bg-purple-400 hover:text-white transition rounded p-2"
-						onClick={GenUUIDV1}
-					>
-						uuid v1
-					</button>
-					<button
-						type="button"
-						className="bg-purple-200 hover:bg-purple-400 hover:text-white transition rounded p-2"
-						onClick={GenUUIDV4}
-					>
-						uuid v4
-					</button>
-					<button
-						type="button"
-						className="bg-purple-200 hover:bg-purple-400 hover:text-white transition rounded p-2"
-						onClick={GenNIL}
-					>
-						uuid NIL
-					</button>
-				</div>
-			</section>
+			</article>
+			<article className="w-11/12 mt-4">
+				<section className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+					{/* Numbers of uuids */}
+					<div>
+						<div className="outline outline-neutral-100 rounded p-5 space-y-5 sticky top-4">
+							<h1 className="text-xl font-semibold text-gray-500">
+								จำนวนทีต้องการ
+							</h1>
+
+							<div className="flex flex-row gap-x-2">
+								<input
+									type="number"
+									min={1}
+									max={1000}
+									placeholder="จำนวน 1-100"
+									value={amount}
+									className="w-7/12 rounded outline outline-purple-200 px-4 py-2"
+									onChange={(e) => setAmount(parseInt(e.target.value))}
+								/>
+								<DefaultButton
+									label="สุ่มใหม่"
+									icon={<ShuffleLineIcon size={18} />}
+									onclickFunction={() => GenerateListId()}
+									isDisabled={amount <= 0 || Number.isNaN(amount)}
+								/>
+								<DefaultButton
+									label="ล้างค่า"
+									type="clear"
+									icon={<DeleteBinLineIcon size={18} />}
+									onclickFunction={() => {
+										setListId([])
+										setAmount(1)
+									}}
+								/>
+							</div>
+							{listId.length > 0 && (
+								<div className="flex items-center gap-x-4">
+									<DownloadFile uuid={listId} version="v4" />
+									<DefaultButton
+										icon={<ClipboardLineIcon size={18} />}
+										label="คัดลอกทั้งหมด"
+										onclickFunction={() => CopyAll()}
+									/>
+								</div>
+							)}
+						</div>
+					</div>
+					{/* Result */}
+					<div className="outline outline-neutral-100 rounded p-5 space-y-2">
+						<h1 className="text-xl font-semibold text-purple-400">
+							ผลลัพธ์{" "}
+							<small className="text-gray-500 text-xs font-light">
+								คลิกเพื่อคัดลอก
+							</small>
+						</h1>
+
+						{listId.map((elem, index) => (
+							<p
+								key={index}
+								onClick={() => CopyToClipboard(elem)}
+								className="hover:text-purple-400 hover:cursor-copy"
+							>
+								{elem}
+							</p>
+						))}
+					</div>
+				</section>
+			</article>
 		</main>
 	)
 }
