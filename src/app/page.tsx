@@ -79,14 +79,14 @@ function Home() {
 								จำนวนทีต้องการ
 							</h1>
 
-							<div className="flex flex-row gap-x-2">
+							<div className="flex gap-x-2">
 								<input
 									type="number"
 									min={1}
 									max={1000}
 									placeholder="จำนวน 1-100"
 									value={amount}
-									className="w-7/12 rounded outline outline-purple-200 px-4 py-2"
+									className="flex-grow rounded outline outline-purple-200 px-4 py-2"
 									onChange={(e) => setAmount(parseInt(e.target.value))}
 								/>
 								<DefaultButton
