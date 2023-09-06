@@ -36,11 +36,6 @@ function Home() {
 	const CopyToClipboard = (id: string) => {
 		navigator.clipboard.writeText(id).then((res) => CopiedNotify())
 	}
-	const CopyAll = () => {
-		navigator.clipboard
-			.writeText(listId.join("\n"))
-			.then((res) => CopiedNotify())
-	}
 
 	const GenerateListId = () => {
 		if (amount > 1000) {
@@ -71,7 +66,7 @@ function Home() {
 				</div>
 			</article>
 			<article className="w-11/12 mt-4">
-				<section className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+				<section className="grid sm:grid-cols-1 lg:grid-cols-2 gap-4">
 					{/* Numbers of uuids */}
 					<div>
 						<div className="outline outline-neutral-100 rounded p-5 space-y-5 sticky top-4">
@@ -106,13 +101,8 @@ function Home() {
 								/>
 							</div>
 							{listId.length > 0 && (
-								<div className="flex items-center gap-x-4">
+								<div className="flex items-center">
 									<DownloadFile uuid={listId} version="v4" />
-									<DefaultButton
-										icon={<ClipboardLineIcon size={18} />}
-										label="คัดลอกทั้งหมด"
-										onclickFunction={() => CopyAll()}
-									/>
 								</div>
 							)}
 						</div>
