@@ -2,7 +2,6 @@
 "use client"
 import React, { useState } from "react"
 import { v1, v4, NIL } from "uuid"
-import ClipboardLineIcon from "remixicon-react/ClipboardLineIcon"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import DownloadFile from "@/components/DownloadFile"
@@ -10,6 +9,7 @@ import DefaultButton from "@/components/DefaultButton"
 import ShuffleLineIcon from "remixicon-react/ShuffleLineIcon"
 import DeleteBinLineIcon from "remixicon-react/DeleteBinLineIcon"
 import Image from "next/image"
+import NewsBox from "@/components/NewsBox"
 
 function Home() {
 	const [amount, setAmount] = useState<number>(1)
@@ -106,6 +106,8 @@ function Home() {
 								</div>
 							)}
 						</div>
+
+						<NewsBox />
 					</div>
 					{/* Result */}
 					<div className="outline outline-neutral-100 rounded p-5 space-y-2">
